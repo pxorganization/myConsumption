@@ -28,7 +28,7 @@ electricity_prices = [
 ]
 
 # RL parameters
-num_episodes = 10000  # Number of tries
+num_episodes = 100000  # Number of tries
 learning_rate = 0.1
 discount_factor = 0.95
 epsilon = 1.0
