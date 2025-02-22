@@ -1,9 +1,16 @@
-import pandas as pd
 import numpy as np
+import random
+import pandas as pd
 from pprint import pprint
 
-
+# Function to process historical price signals
 def process_price_signals():
+    """
+    Process the price signals from the Excel file and return all historical prices.
+    
+    Returns:
+        list: A list of lists, where each inner list contains 24 hourly prices for a day.
+    """
     # Load data
     df = pd.read_excel('price_signals.xlsx')
 
@@ -22,11 +29,5 @@ def process_price_signals():
 
     return data_list
 
-
-def main():
-    data_list = process_price_signals()
-    pprint(data_list)
-
-
-if __name__ == "__main__":
-    main()
+# Train the model using historical data
+print(process_price_signals())
