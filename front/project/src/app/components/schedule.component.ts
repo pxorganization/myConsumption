@@ -22,4 +22,3 @@ import { CommonModule } from '@angular/common';
 export class ScheduleComponent implements OnInit {
     ngOnInit() {}
 }
-

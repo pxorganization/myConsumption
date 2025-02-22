@@ -2,12 +2,6 @@ import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 
-// interface ThemeOption {
-//   name: string;
-//   value: string;
-//   color: string;
-// }
-
 @Component({
   selector: 'app-device',
   standalone: true,
@@ -20,12 +14,13 @@ import { FormsModule } from '@angular/forms';
         <h3>Device Information</h3>
         <div class="form-group">
           <label>Name</label>
-          <input type="text" [(ngModel)]="profile.name" class="form-input">
+          <input type="text" [(ngModel)]="profile.name" class="form-input" placeholder="Enter device name">
         </div>
 
         <div class="form-group">
           <label>Type</label>
           <select [(ngModel)]="profile.type" class="form-input">
+            <option value="" disabled selected>Select a room type</option>
             <option value="Kitchen">Kitchen</option>
             <option value="Living Room">Living Room</option>
             <option value="Bedroom">Bedroom</option>
@@ -37,68 +32,33 @@ import { FormsModule } from '@angular/forms';
         <h3>Time Details</h3>
         <div class="form-group">
           <label>Estimated Duration in hours</label>
-          <input type="text" [(ngModel)]="profile.duration" class="form-input">
+          <input type="text" [(ngModel)]="profile.duration" class="form-input" placeholder="e.g., 2">
         </div>
 
-        <label>Estimated Start Time based on your usage during a day</label>
-          <select [(ngModel)]="profile.start" class="form-input">
-            <option value="Kitchen">Kitchen</option>
-            <option value="Living Room">Living Room</option>
-            <option value="Bedroom">Bedroom</option>
-          </select>
+        <div class="form-group">
+          <label>Estimated Start Time based on your usage during a day</label>
+          <input type="text" [(ngModel)]="profile.start" class="form-input" placeholder="HH:MM (24hr format)">
         </div>
 
-        <label>Estimated End Time on your usage during a day</label>
-          <select [(ngModel)]="profile.start" class="form-input">
-            <option value="Kitchen">Kitchen</option>
-            <option value="Living Room">Living Room</option>
-            <option value="Bedroom">Bedroom</option>
-          </select>
+        <div class="form-group">
+          <label>Estimated End Time based on your usage during a day</label>
+          <input type="text" [(ngModel)]="profile.end" class="form-input" placeholder="HH:MM (24hr format)">
         </div>
 
       </div>
 
-
-      <div class="settings-section">
-        <h3>Energy Cost Settings</h3>
-        <div class="form-group">
-          <label>Currency</label>
-          <select [(ngModel)]="profile.currency" class="form-input">
-            <option value="USD">USD ($)</option>
-            <option value="EUR">EUR (€)</option>
-            <option value="GBP">GBP (£)</option>
-          </select>
-        </div>
-        <div class="form-group">
-          <label>Cost per kWh</label>
-          <input type="number" [(ngModel)]="profile.costPerKwh" class="form-input">
-        </div>
-      </div>
-
-      <button class="save-button" (click)="saveSettings()">Save Changes</button>
+      <button class="save-button" (click)="saveSettings()">Add Device</button>
     </div>
   `
 })
-export class ProfileComponent {
-//   themes: ThemeOption[] = [
-//     { name: 'Blue', value: 'blue', color: '#4c6fff' },
-//     { name: 'Green', value: 'green', color: '#2ecc71' },
-//     { name: 'Purple', value: 'purple', color: '#9b59b6' },
-//     { name: 'Orange', value: 'orange', color: '#e67e22' }
-//   ];
-
+export class AddComponent {
   profile = {
-    name: 'Jenifer Feroz',
-    type: 'Living Room',
-    plan: 'blue',
-    duration: '2',
-    start: "14:00",
-    end: ""
+    name: '',
+    type: '',
+    duration: '',
+    start: '',
+    end: ''
   };
-
-//   selectTheme(theme: ThemeOption) {
-//     this.profile.theme = theme.value;
-//   }
 
   saveSettings() {
     // Here you would typically save to a backend

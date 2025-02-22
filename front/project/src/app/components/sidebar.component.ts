@@ -18,10 +18,22 @@ import { RouterModule } from '@angular/router';
           <i class="fas fa-calendar"></i>
           Scheduling
         </a>
-        <a routerLink="/devices" routerLinkActive="active">
-          <i class="fas fa-plug"></i>
-          Devices
-        </a>
+
+        <div class="nav-item">
+          <a routerLink="/devices" routerLinkActive="active">
+            <i class="fas fa-plug"></i>
+            Devices
+          </a>
+          <div class="submenu">
+            <a routerLink="/devices/add" routerLinkActive="active" class="submenu-item">
+              <i class="fas fa-plus"></i>
+              Add Device
+            </a>
+          </div>
+        </div>
+
+
+
         <a routerLink="/profile" routerLinkActive="active">
           <i class="fas fa-user"></i>
           Profile
@@ -57,8 +69,9 @@ import { RouterModule } from '@angular/router';
       background: white;
       border-radius: 16px;
       padding: 20px;
-      margin-bottom: 40px;
+      margin-bottom: 20px;
     }
+    
 
     .logo {
       font-size: 1.5rem;
@@ -97,6 +110,24 @@ import { RouterModule } from '@angular/router';
 
     nav i {
       width: 20px;
+    }
+
+    .nav-item {
+      position: relative;
+    }
+
+    .submenu {
+      margin-left: 20px;
+      margin-top: 5px;
+    }
+
+    .submenu-item {
+      padding: 8px 12px !important;
+      font-size: 0.9em;
+    }
+
+    .submenu-item i {
+      font-size: 0.9em;
     }
   `]
 })
