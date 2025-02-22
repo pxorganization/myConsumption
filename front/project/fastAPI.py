@@ -3,17 +3,17 @@ from fastapi.responses import FileResponse
 import sys
 import os
 
-# Add the path to the 'back' directory to sys.path
-sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '../../back')))
+# Ensure the back directory is in the Python path
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "../../back")))
 
-# Now you can import from diagramMat.py
+# Import main() from diagramMat.py
 from diagramMat import main
 
 app = FastAPI()
 
-# Define static image path
-STATIC_FOLDER = "C:/Users/koron/OneDrive/Traffic LightWave/Hackathons/Ai Hackathon (ACEin)/back/static"
+STATIC_FOLDER = "C:/Users/koron/OneDrive/Traffic LightWave/Hackathons/Ai Hackathon (ACEin)/front/project/src/assets"
 IMAGE_PATH = os.path.join(STATIC_FOLDER, "bar_chart.png")
+
 
 # Ensure static folder exists
 os.makedirs(STATIC_FOLDER, exist_ok=True)

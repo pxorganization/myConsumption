@@ -131,3 +131,97 @@ input:checked + .slider {
 input:checked + .slider:before {
   transform: translateX(26px);
 }
+
+
+
+
+
+/* profile and adddevice*/
+.settings-container {
+  background: white;
+  border-radius: 16px;
+  padding: 30px;
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+.settings-section {
+  margin-bottom: 30px;
+  padding-bottom: 20px;
+  border-bottom: 1px solid #eee;
+}
+
+.settings-section h3 {
+  margin-bottom: 20px;
+  color: #333;
+}
+
+.form-group {
+  margin-bottom: 20px;
+}
+
+.form-group label {
+  display: block;
+  margin-bottom: 8px;
+  color: #666;
+}
+
+.form-input {
+  width: 100%;
+  padding: 10px;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  font-size: 14px;
+}
+
+.theme-options {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 15px;
+}
+
+.theme-option {
+  padding: 15px;
+  border-radius: 8px;
+  border: 2px solid transparent;
+  cursor: pointer;
+  text-align: center;
+}
+
+.theme-option.active {
+  border-color: #4c6fff;
+}
+
+.theme-color {
+  width: 40px;
+  height: 40px;
+  border-radius: 8px;
+  margin: 0 auto 10px;
+}
+
+.theme-name {
+  font-size: 14px;
+  color: #666;
+}
+
+.checkbox-label {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  cursor: pointer;
+}
+
+.save-button {
+  background: #4c6fff;
+  color: white;
+  border: none;
+  padding: 12px 24px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 16px;
+  width: 100%;
+}
+
+.save-button:hover {
+  background: #3b5bff;
+}
