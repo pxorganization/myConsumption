@@ -1,5 +1,6 @@
 
 # Re-import required libraries after execution state reset
+from matplotlib.lines import Line2D
 import matplotlib.pyplot as plt
 
 # Define data points
@@ -71,23 +72,34 @@ allocationplot = {
 }
 
 
+def split_time_range(time_range):
+    start, end = time_range
+    if start > end:
+        return [(start, 23), (0, end)]
+    else:
+        return [time_range]
+
+
 def main():
     # Device positions for y-axis
     device_positions = list(range(len(allocationplot), 0, -1))  
 
     # Create figure
-    fig, ax = plt.subplots(figsize=(10, 5))
+    fig, ax = plt.subplots(figsize=(16, 8))
 
 
     # Iterate through devices and plot their schedules
     for idex, (device, times) in enumerate(allocationplot.items()):
         y_pos = device_positions[idex]
 
-        # Plot blue schedule (normal)
-        ax.plot(times["schedule"], [y_pos, y_pos], color="#00A3E0", marker="o", markersize=6)
 
-        # Plot red period (critical)
-        ax.plot(times["period"], [y_pos, y_pos], color="#fa4616", marker="o", markersize=6)
+        # schedule with orange
+        for segment in split_time_range(times["schedule"]):
+            ax.plot(segment, [y_pos, y_pos], color="#00A3E0", marker="o", markersize=6)
+
+        # period with blue
+        for segment in split_time_range(times["period"]):
+            ax.plot(segment, [y_pos, y_pos], color="#fa4616", marker="o", markersize=6)
 
 
     # Formatting
@@ -97,9 +109,27 @@ def main():
     ax.set_xlabel("Time (Hours)")
     ax.grid(True, linestyle="--", alpha=0.6)
 
+
+    legend_elements = [
+        Line2D([0], [0], color="#fa4616", lw=4, label="Optimized Scheduling to reduce cost and waiting time"),
+        Line2D([0], [0], color="#00A3E0", lw=4, label="Available Operating Period during the day")
+    ]
+    ax.legend(
+        handles=legend_elements,
+        loc="upper center",       
+        fontsize=12,
+        frameon=True,
+        bbox_to_anchor=(0.5, 1.15),  # Places it above the plot (adjust the second value for spacing)
+        ncol=2  # Arranges legend items in one row (change if needed)
+    )
+
+
     return plt, fig
 
 
+
+plt, fig = main()
+plt.show()
 
 
 
