@@ -1,7 +1,10 @@
 import numpy as np
-import random
 import pandas as pd
-from pprint import pprint
+import os
+
+print("Current Directory:", os.getcwd())  # Τρέχων φάκελος
+print("Files in directory:", os.listdir())  # Όλα τα αρχεία στον φάκελο
+print("--------------------------------------------------------------------")
 
 # Function to process historical price signals
 def process_price_signals():
@@ -12,7 +15,8 @@ def process_price_signals():
         list: A list of lists, where each inner list contains 24 hourly prices for a day.
     """
     # Load data
-    df = pd.read_excel('price_signals.xlsx')
+    df = pd.read_excel('back/price_signals.xlsx')
+
 
     # Create pivot table
     pivot_table = df.pivot(

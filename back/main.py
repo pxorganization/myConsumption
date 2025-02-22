@@ -3,7 +3,6 @@ import random
 import pandas as pd
 import signal
 import sys
-from pprint import pprint
 
 # Function to handle Ctrl+C
 def signal_handler(sig, frame):
@@ -11,15 +10,22 @@ def signal_handler(sig, frame):
     np.save("model_interrupted.npy", Q)
     print("Model saved to model_interrupted.npy")
     sys.exit(0)
-    
-# Register the signal handler for Ctrl+C
-signal.signal(signal.SIGINT, signal_handler)
+
+# Function to generate the array of arrays
+def generate_normal_random():
+    # Create a list of 30 arrays, each containing 24 random values
+    arrays = []
+    for _ in range(30):
+        # Generate a single array with 24 random values between 0.085 and 0.135
+        array = [round(random.uniform(0.085, 0.135), 3) for _ in range(24)]
+        arrays.append(array)
+    return arrays
 
 # Function to process historical price signals
 def process_price_signals():
     
     # Load data
-    df = pd.read_excel('price_signals.xlsx')
+    df = pd.read_excel('back/price_signals.xlsx')
 
     # Create pivot table
     pivot_table = df.pivot(
@@ -34,12 +40,7 @@ def process_price_signals():
     # Convert the numpy array to a list of lists
     data_list = data_array.tolist()
 
-    return data_list
-
-# Train the model using historical data
-historical_prices = process_price_signals()
-
-#print("Historical Prices:",historical_prices )
+    return data_array.tolist()
 
 # Device data (durations and start ranges are now in minutes)
 devices = {
@@ -56,19 +57,19 @@ devices = {
     "Air Conditioner 1": {"duration": 90, "consumption": 0.8, "start_range": (8 * 60, 11 * 60), "flexible": False},  
     "Air Conditioner 2": {"duration": 90, "consumption": 0.8, "start_range": (19 * 60, 22 * 60), "flexible": False},  
     "Water Heater": {"duration": 120, "consumption": 3.2, "start_range": (17 * 60, 22 * 60), "flexible": False},  
-    "Refrigerator": {"duration": 1440, "consumption": 0.22, "start_range": (0, 24 * 60), "flexible": True},  
+    "Refrigerator": {"duration": 1440, "consumption": 0.22, "start_range": (0, 23 * 60), "flexible": True},  
     "Lighting 1": {"duration": 180, "consumption": 2.1, "start_range": (7 * 60, 10 * 60), "flexible": True},  
-    "Lighting 2": {"duration": 420, "consumption": 2.1, "start_range": (6 * 60, 23 * 60), "flexible": True},
+    "Lighting 2": {"duration": 420, "consumption": 2.1, "start_range": (18 * 60, 1 * 60), "flexible": True},
 }
 
 # Electricity prices (example for 24 hours, in $/kWh)
-electricity_prices = [
+given_prices = [
     0.10709, 0.104, 0.1, 0.08566, 0.085, 0.08553, 0.09507, 0.10307, 0.065, 0.04734, 0.001, 0.00054,
     0.00224, 0.00324, 0.0651, 0.09691, 0.09744, 0.094, 0.09858, 0.10103, 0.10572, 0.10105, 0.10319, 0.09905
 ]
 
 # RL parameters
-num_episodes = 50000  # Number of tries
+num_episodes = 1000  # Number of tries
 learning_rate = 0.1
 discount_factor = 0.95
 epsilon = 1.0
@@ -86,6 +87,19 @@ Q = np.zeros((num_devices, num_minutes))
 
 # Maximum power constraint in kW
 max_power = 5.75  # Can be changed to 7.36 or 9.2
+
+# Register the signal handler for Ctrl+C
+signal.signal(signal.SIGINT, signal_handler)
+
+#In case nothing works try this to get out of the shits
+#complete_data = generate_normal_random()
+
+# Generate the random arrays
+complete_data = generate_normal_random()
+complete_data.append(given_prices)
+
+for day in process_price_signals():
+    complete_data.append(day)
 
 # Helper function to calculate total cost and total waiting time
 def calculate_metrics(schedule, electricity_prices):
@@ -153,9 +167,9 @@ random.seed(42)
 
 # Training the RL agent using historical data
 try:
-    for day_prices in historical_prices:
+    for day_prices in complete_data:
         electricity_prices = day_prices  # Use prices for the current day
-        print(f"\nTraining on Day")
+        #print(f"\nTraining on Day")
 
         for episode in range(num_episodes):
             schedule = {}
@@ -236,7 +250,7 @@ for device, start_minute in learned_schedule.items():
     print(f"{device} - {start_minute // 60}:{start_minute % 60:02d}")
 
 # Calculate and print the total cost and waiting time
-total_cost, total_waiting_time = calculate_metrics(learned_schedule, electricity_prices)
+total_cost, total_waiting_time = calculate_metrics(learned_schedule, given_prices)
 
 print(f"\nTotal loops: {num_episodes}")
 print(f"\nTotal Cost: ${total_cost:.5f}")
