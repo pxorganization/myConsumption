@@ -27,5 +27,8 @@ export class ApiService {
     return this.http.get<number[]>(`${this.apiUrl}/getConsumption`);
   }
 
+  getComparison(): Observable<number[]> {
+    return this.http.get<number[]>(`${this.apiUrl}/getComparisonPlans`);
+  }
 
 }

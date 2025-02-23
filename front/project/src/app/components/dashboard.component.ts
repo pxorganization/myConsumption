@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { Chart } from 'chart.js/auto';
 import { ApiService } from '../services/api.service'; // Adjust the path based on your project structure
 import { RouterModule } from '@angular/router';
+import { Observable } from 'rxjs';
 
 @Component({
   selector: 'app-dashboard',
@@ -23,6 +24,23 @@ import { RouterModule } from '@angular/router';
           <h3>Energy Cost</h3>
           <canvas id="costChart"></canvas>
         </div>
+
+
+        <div class="card">
+        <div class="card" style="background: linear-gradient(45deg, rgb(0, 82, 212), rgb(67, 100, 247), rgb(111, 177, 252));" >
+          <h3>Comparison Plan 1 </h3>
+          <div class="comparison-value">{{ comparisonData[0] }}</div>
+        </div>
+        <div class="card" style="background: linear-gradient(45deg, rgb(17, 153, 142), rgb(56, 239, 125));">
+          <h3>Comparison Plan 2</h3>
+          <div class="comparison-value"><i class="fas fa-arrow-down"></i>{{ comparisonData[1] }}</div>
+        </div>
+        <div class="card" style="background: linear-gradient(45deg, rgb(255, 195, 18), rgb(247, 240, 31));"
+        >
+          <h3>Comparison Plan 3</h3>
+          <div class="comparison-value">{{ comparisonData[2] }}</div>
+        </div>
+        </div>
       </div>
     </div>
   `,
@@ -37,12 +55,11 @@ import { RouterModule } from '@angular/router';
     }
   
     .chart-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); /* Προσαρμόζεται δυναμικά */
-  gap: 20px;
-  width: 100%;
-}
-
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); /* Προσαρμόζεται δυναμικά */
+      gap: 20px;
+      width: 100%;
+    }
   
     .card {
       background: white;
@@ -51,6 +68,10 @@ import { RouterModule } from '@angular/router';
       box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
       min-width: 0; /* Prevents overflow */
       max-width: 100%; /* Ensures cards don’t exceed container width */
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
     }
   
     h3 {
@@ -65,16 +86,25 @@ import { RouterModule } from '@angular/router';
       max-height: 300px; /* Prevents excessive growth */
     }
   
+    .comparison-value {
+      font-size: 24px;
+      font-weight: bold;
+      color: #333;
+    }
+  
     /* Position the charts in the grid */
     .card:nth-child(1) { grid-column: 1; grid-row: 1; } /* Daily Prices (top left) */
     .card:nth-child(2) { grid-column: 2; grid-row: 1; } /* Energy Consumption (top right) */
     .card:nth-child(3) { grid-column: 1; grid-row: 2; } /* Energy Cost (bottom left) */
+    .card:nth-child(4) { grid-column: 2; grid-row: 2; } /* Comparison Plan 1 (bottom right) */
+    .card:nth-child(5) { grid-column: 1; grid-row: 3; } /* Comparison Plan 2 (bottom left) */
+    .card:nth-child(6) { grid-column: 2; grid-row: 3; } /* Comparison Plan 3 (bottom right) */
   
     /* Large screens (desktops, > 1200px) */
     @media (min-width: 1200px) {
       .chart-grid {
         grid-template-columns: repeat(2, 1fr); /* Maintain two columns */
-        grid-template-rows: repeat(2, 1fr); /* Maintain two rows */
+        grid-template-rows: repeat(3, 1fr); /* Maintain three rows */
       }
       canvas {
         height: 300px !important; /* Keep default height */
@@ -85,7 +115,7 @@ import { RouterModule } from '@angular/router';
     @media (min-width: 768px) and (max-width: 1199px) {
       .chart-grid {
         grid-template-columns: repeat(2, 1fr); /* Maintain two columns */
-        grid-template-rows: repeat(2, 1fr); /* Maintain two rows */
+        grid-template-rows: repeat(3, 1fr); /* Maintain three rows */
       }
       canvas {
         height: 250px !important; /* Reduce height for better fit on tablets */
@@ -95,12 +125,12 @@ import { RouterModule } from '@angular/router';
     /* Small screens (tablets and below, ≤ 767px) */
     @media (max-width: 767px) {
       .chart-grid {
-    display: flex;
-    flex-direction: column;
-    gap: 20px;
-    grid-template-columns: 1fr; /* Μία στήλη */
-    grid-template-rows: auto; 
-  }
+        display: flex;
+        flex-direction: column;
+        gap: 20px;
+        grid-template-columns: 1fr; /* Μία στήλη */
+        grid-template-rows: auto; 
+      }
       .card {
         grid-column: auto; /* Reset column span for stacking */
         grid-row: auto; /* Reset row span for stacking */
@@ -131,29 +161,41 @@ import { RouterModule } from '@angular/router';
     @media (min-width: 1400px) {
       .chart-grid {
         grid-template-columns: repeat(2, 1fr); /* Maintain two columns */
-        grid-template-rows: repeat(2, 1fr); /* Maintain two rows */
+        grid-template-rows: repeat(3, 1fr); /* Maintain three rows */
       }
       canvas {
         height: 350px !important; /* Slightly increase height for very large screens */
       }
     }
   `]
-  
 })
 export class DashboardComponent implements OnInit, AfterViewInit {
   private priceChart: Chart | undefined;
   private costChart: Chart | undefined;
   private usageChart: Chart | undefined;
+  comparisonData: number[] = []; // Array to store comparison data
 
   constructor(private apiService: ApiService) {}
 
   ngOnInit(): void {
     this.createPriceChart(); // Create the hardcoded price chart immediately
     this.fetchDataAndCreateCharts(); // Fetch and create dynamic cost and usage charts
+    this.fetchComparisonData(); // Fetch comparison data
   }
 
   ngAfterViewInit(): void {
     // Ensure the DOM is fully rendered before creating charts
+  }
+
+  fetchComparisonData(): void {
+    this.apiService.getComparison().subscribe({
+      next: (data: number[]) => {
+        this.comparisonData = data; // Store the comparison data
+      },
+      error: (error) => {
+        console.error('Error fetching comparison data:', error);
+      }
+    });
   }
 
   fetchDataAndCreateCharts(): void {
