@@ -1,10 +1,3 @@
-import numpy as np
-
-# Load the Q-table from a file
-Q = np.load("../43_100_lightwave.npy")
-
-num_minutes = 24 * 60  # 1440 minutes in a day
-
 # Device data (durations and start ranges are now in minutes)
 devices = {
     "Dish Washer": {"duration": 120, "consumption": 0.7, "start_range": (14 * 60, 22 * 60), "flexible": False},  
@@ -25,24 +18,10 @@ devices = {
     "Lighting 2": {"duration": 420, "consumption": 2.1, "start_range": (18 * 60, 1 * 60), "flexible": True},
 }
 
-# Print the learned schedule
-learned_schedule = {}
-for device in devices:
-    device_index = list(devices.keys()).index(device)
-    start_range = devices[device]["start_range"]
-    
-    if devices[device]["flexible"]:
-        # For flexible devices, always start at the earliest possible time
-        best_start_minute = start_range[0]
-    else:
-        if start_range[1] > start_range[0]:  # Normal range
-            best_start_minute = np.argmax(Q[device_index, start_range[0]:start_range[1]]) + start_range[0]
-        else:  # Cyclic range
-            q_values = np.concatenate((Q[device_index, start_range[0]:], Q[device_index, :start_range[1]]))
-            best_start_minute = (np.argmax(q_values) + start_range[0]) % num_minutes
-    
-    learned_schedule[device] = best_start_minute
+# Electricity prices (example for 24 hours, in $/kWh)
+given_prices = [
+    0.10709, 0.104, 0.1, 0.08566, 0.085, 0.08553, 0.09507, 0.10307, 0.065, 0.04734, 0.001, 0.00054,
+    0.00224, 0.00324, 0.0651, 0.09691, 0.09744, 0.094, 0.09858, 0.10103, 0.10572, 0.10105, 0.10319, 0.09905
+]
 
-print("\nOptimal Schedule:")
-for device, start_minute in learned_schedule.items():
-    print(f"{device} - {start_minute // 60}:{start_minute % 60:02d}")
+num_minutes = 24 * 60  # 1440 minutes in a day
