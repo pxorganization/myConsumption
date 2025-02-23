@@ -27,18 +27,19 @@ import { Observable } from 'rxjs';
 
 
         <div class="card">
+        <h3>Reduction % of cost</h3>
         <div class="card" style="background: linear-gradient(45deg, rgb(0, 82, 212), rgb(67, 100, 247), rgb(111, 177, 252));" >
-          <h3>Comparison Plan 1 </h3>
-          <div class="comparison-value">{{ comparisonData[0] }}</div>
+          <h3>Comparison to myHomeEnter </h3>
+          <div class="comparison-value">{{ comparisonData[0] | number:'1.2-2'}}%</div>
         </div>
         <div class="card" style="background: linear-gradient(45deg, rgb(17, 153, 142), rgb(56, 239, 125));">
-          <h3>Comparison Plan 2</h3>
-          <div class="comparison-value"><i class="fas fa-arrow-down"></i>{{ comparisonData[1] }}</div>
+          <h3>Comparison to G1/G1N</h3>
+          <div class="comparison-value">{{ comparisonData[1] | number:'1.2-2'}}%</div>
         </div>
         <div class="card" style="background: linear-gradient(45deg, rgb(255, 195, 18), rgb(247, 240, 31));"
         >
-          <h3>Comparison Plan 3</h3>
-          <div class="comparison-value">{{ comparisonData[2] }}</div>
+          <h3>Comparison to myHome4All</h3>
+          <div class="comparison-value">{{ comparisonData[2] | number:'1.2-2'}}%</div>
         </div>
         </div>
       </div>
