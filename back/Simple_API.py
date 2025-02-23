@@ -1,13 +1,24 @@
 from fastapi import FastAPI
 import numpy as np
+from fastapi.middleware.cors import CORSMiddleware
 
 # Initialize FastAPI app
 app = FastAPI()
 
+# Add CORS middleware
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["http://localhost:4200"],  # Allow requests from Angular (localhost:4200)
+    allow_credentials=True,  # Allow cookies or authorization headers if needed
+    allow_methods=["*"],  # Allow all HTTP methods (GET, POST, etc.)
+    allow_headers=["*"],  # Allow all headers
+)
+
+# Rest of your existing code remains the same...
 num_minutes = 24 * 60  # 1440 minutes in a day
 
 # Load the Q-table from a file
-Q = np.load("43_100_lightwave.npy")
+Q = np.load("../43_100_lightwave.npy")
 print("Q-table loaded from 43_100_lightwave.npy")
 
 # Device data (durations and start ranges are now in minutes)
@@ -182,6 +193,7 @@ schedule = generate_schedule()
 print("Schedule:", schedule)
 total_cost, total_waiting_time = calculate_metrics(schedule, given_prices)
 
+#print("Total waiting time:", total_waiting_time)
 # Endpoint to get a new schedule
 @app.get("/getSchedule")
 def get_schedule():
@@ -200,6 +212,8 @@ def get_total_waiting_time():
 @app.get("/getEnergyCost")
 def get_energy_cost():
     return calculate_total_cost_per_hour(schedule, given_prices)
+
+#print("calculate_total_cost_per_hour(schedule, given_prices):", calculate_total_cost_per_hour(schedule, given_prices))
 
 @app.get("/getConsumption")
 def get_consumption():
