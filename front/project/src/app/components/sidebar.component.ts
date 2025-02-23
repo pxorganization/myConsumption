@@ -44,19 +44,11 @@ import { ApiService } from '../services/api.service'; // Import the ApiService f
       <div class="stat-box">
         <h3>Total Energy Cost</h3>
         <div class="amount">{{ totalEnergyCost | currency:'EUR':'symbol':'1.2-2' }}</div>
-        <div class="change increase">
-          <i class="fas fa-arrow-down"></i>
-          12.5% from last month
-        </div>
       </div>
       
       <div class="stat-box">
   <h3>Total Waiting Time</h3>
   <div class="amount">{{ getFormattedTime(totalWaitingTime) }}</div>
-  <div class="change increase">
-    <i class="fas fa-arrow-down"></i>
-    8.3% from last month
-  </div>
 </div>
 
 
