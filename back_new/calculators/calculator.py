@@ -133,5 +133,4 @@ def calculate_total_consumption_per_hour(schedule, electricity_prices):
 
             # Add the cost to the corresponding hour
             total_consumption_per_hour[current_hour] += consumption * (minutes_in_current_hour / 60)
-
     return total_consumption_per_hour

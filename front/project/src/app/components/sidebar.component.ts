@@ -1,6 +1,7 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
+import { ApiService } from '../services/api.service'; // Import the ApiService from the correct location
 
 @Component({
   selector: 'app-sidebar',
@@ -32,8 +33,6 @@ import { RouterModule } from '@angular/router';
           </div>
         </div>
 
-
-
         <a routerLink="/profile" routerLinkActive="active">
           <i class="fas fa-user"></i>
           Profile
@@ -44,7 +43,7 @@ import { RouterModule } from '@angular/router';
     <div class="stats-card">
       <div class="stat-box">
         <h3>Total Energy Cost</h3>
-        <div class="amount">2,458.32€ </div>
+        <div class="amount">{{ totalEnergyCost | currency:'EUR':'symbol':'1.2-2' }}</div>
         <div class="change increase">
           <i class="fas fa-arrow-down"></i>
           12.5% from last month
@@ -52,16 +51,15 @@ import { RouterModule } from '@angular/router';
       </div>
       
       <div class="stat-box">
-        <h3>Total Waiting Time</h3>
-        <div class="amount">4.2 hours</div>
-        <div class="change increase">
-          <i class="fas fa-arrow-down"></i>
-          8.3% from last month
-        </div>
-      </div>
-    </div>
+  <h3>Total Waiting Time</h3>
+  <div class="amount">{{ getFormattedTime(totalWaitingTime) }}</div>
+  <div class="change increase">
+    <i class="fas fa-arrow-down"></i>
+    8.3% from last month
+  </div>
+</div>
 
-    
+
   `,
   styles: [`
     .sidebar {
@@ -71,7 +69,6 @@ import { RouterModule } from '@angular/router';
       padding: 20px;
       margin-bottom: 20px;
     }
-    
 
     .logo {
       font-size: 1.5rem;
@@ -99,13 +96,12 @@ import { RouterModule } from '@angular/router';
 
     nav a:hover {
       background: #f5f7ff;
-      color:rgba(250, 71, 22, 0.77);
+      color: rgba(250, 71, 22, 0.77);
     }
 
     nav a.active {
       background: #fa4616;
       color: white;
-      /*#50c5f7#4aba9e*/
     }
 
     nav i {
@@ -131,4 +127,44 @@ import { RouterModule } from '@angular/router';
     }
   `]
 })
-export class SidebarComponent {}
+
+
+export class SidebarComponent implements OnInit {
+  totalEnergyCost: number = 0;
+  totalWaitingTime: number = 0;
+
+  getFormattedTime(minutes: number): string {
+    const hours = Math.floor(minutes / 60);
+    const remainingMinutes = minutes % 60;
+    const formattedMinutes = remainingMinutes < 10 ? `0${remainingMinutes}` : remainingMinutes;
+    return `${hours}:${formattedMinutes} hours`;
+  }
+
+  constructor(private apiService: ApiService) {}
+
+  ngOnInit(): void {
+    this.fetchData();
+  }
+
+  fetchData(): void {
+    // Fetch total energy cost
+    this.apiService.getTotalCost().subscribe({
+      next: (cost: number) => {
+        this.totalEnergyCost = cost;
+      },
+      error: (error) => {
+        console.error('Error fetching total energy cost:', error);
+      }
+    });
+
+    // Fetch total waiting time
+    this.apiService.getTotalWaitingTime().subscribe({
+      next: (time: number) => {
+        this.totalWaitingTime = time;
+      },
+      error: (error) => {
+        console.error('Error fetching total waiting time:', error);
+      }
+    });
+  }
+}

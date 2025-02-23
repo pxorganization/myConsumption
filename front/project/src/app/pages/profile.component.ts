@@ -36,8 +36,7 @@ interface ThemeOption {
           <div *ngFor="let theme of themes" 
                class="theme-option" 
                [class.active]="theme.value === profile.theme"
-               [style.background]="theme.color"
-               (click)="selectTheme(theme)">
+               [style.background]="theme.color">
             <div class="theme-header">
               <div class="theme-name">{{ theme.name }}</div>
               <div class="theme-description">{{ theme.description }}</div>
@@ -48,10 +47,6 @@ interface ThemeOption {
                 {{ feature }}
               </div>
             </div>
-            <button class="theme-button" 
-            [ngClass]="{'selected-button': theme.value === profile.theme}">
-            {{ theme.value === profile.theme ? 'Selected' : 'Select Plan' }}
-        </button>
           </div>
         </div>
       </div>
@@ -119,25 +114,9 @@ interface ThemeOption {
       left: 0;
       right: 0;
       bottom: 0;
-      border: 3px solid #00A3E0;
+      border: 5px solid, rgb(0, 0, 0);
       border-radius: 16px;
       pointer-events: none;
-    }
-
-    .theme-option:nth-child(1) {
-      background: linear-gradient(45deg, #0052D4, #4364F7, #6FB1FC);
-    }
-
-    .theme-option:nth-child(2) {
-      background: linear-gradient(45deg, #11998e, #38ef7d);
-    }
-
-    .theme-option:nth-child(3) {
-      background: linear-gradient(45deg, #FF416C, #FF4B2B);
-    }
-
-    .theme-option:nth-child(4) {
-      background: linear-gradient(45deg, #FF8008, #FFC837);
     }
 
     .theme-header {
@@ -148,6 +127,8 @@ interface ThemeOption {
       font-size: 24px;
       font-weight: bold;
       margin-bottom: 10px;
+      color: white;
+      font-family: "Poppins", serif;
     }
 
     .theme-description {
@@ -165,9 +146,9 @@ interface ThemeOption {
 
     .feature {
       display: flex;
-      align-items: center;
       gap: 10px;
       font-size: 14px;
+      text-align: left;
     }
 
     .feature i {
@@ -191,12 +172,6 @@ interface ThemeOption {
       color: #333;
     }
 
-    .selected-button {
-    background-color: #00A3E0; /* Μπλε φόντο */
-    color: white; /* Λευκό κείμενο */
-    border: 2px solid #00A3E0; /* Μπλε border */
-    }
-
     .settings-container {
       max-width: 1200px;
     }
@@ -217,49 +192,46 @@ interface ThemeOption {
 export class ProfileComponent {
   themes: ThemeOption[] = [
     { 
-      name: 'Fixed Price Plan',
+      name: 'myHomeEnter',
       value: 'blue',
       color: 'linear-gradient(45deg, #0052D4, #4364F7, #6FB1FC)',
       description: 'Stable pricing for 12 months',
       features: [
-        '€50 discount on your bill',
-        'Additional €50 on 6th month',
         'Fixed rate of 0.145 €/kWh for 12 months',
-        'Free GreenPass service for 3 months',
-        'Up to 2,500 Miles+Bonus miles'
+        'Fixed fee of 5 € per month'
       ]
     },
     { 
-      name: 'Flexible Green Plan',
+      name: 'G1/G1N',
       value: 'green',
       color: 'linear-gradient(45deg, #11998e, #38ef7d)',
-      description: 'Monthly adjusting eco-friendly rates',
+      description: 'Monthly price adjustments',
       features: [
-        'Monthly price adjustments',
-        '100% renewable energy sources',
-        'Free smart meter installation',
-        'Monthly usage insights',
-        'Carbon footprint tracking'
+        'For homes with dual-zone meters: 0.13089 €',
+        'For homes without dual-zone meters:',
+        'Fixed fee of 5 € per month',
+        'Consumption <= 500 kWh with cost of 0.1548 €',
+        'Consumption > 500 kWh with cost of 0.16246 €'
       ]
     },
     { 
-      name: 'Dynamic Savings Plan',
+      name: 'myHome4All',
       value: 'yellow',
-      color: 'linear-gradient(45deg, #FF416C, #FF4B2B)',
-      description: 'Optimize costs with dynamic pricing',
+      color: 'linear-gradient(45deg, #FFC312,rgb(247, 240, 31))',
+      description: 'Floating pricing per month',
       features: [
-        'Real-time price updates',
-        'Peak/Off-peak pricing',
-        'Energy usage alerts',
-        'Monthly savings reports',
-        'Flexible payment options'
+        'For homes with dual-zone meters: 0.12882 €',
+        'For homes without dual-zone meters:',
+        'Fixed fee of 5 € per month',
+        'First 500 kWh of the month with cost of 0.14541 €',
+        'Rest of kWh of the month with the cost of 0.18114 €'
       ]
     },
     { 
-      name: 'Wholesale Market Plan',
+      name: 'Upcoming...',
       value: 'orange',
       color: 'linear-gradient(45deg, #FF8008, #FFC837)',
-      description: 'Real-time wholesale electricity prices',
+      description: 'Real-time electricity prices per hour',
       features: [
         'Direct access to wholesale rates',
         'Real-time price monitoring',
@@ -271,8 +243,8 @@ export class ProfileComponent {
   ];
 
   profile = {
-    name: 'Jenifer Feroz',
-    email: 'jenifer@example.com',
+    name: 'Light Wave',
+    email: 'lightwave@example.com',
     theme: 'orange', // Preselected orange plan
     notifications: {
       email: true,
@@ -280,10 +252,6 @@ export class ProfileComponent {
     },
     currency: 'EUR'
   };
-
-  selectTheme(theme: ThemeOption) {
-    this.profile.theme = theme.value;
-  }
 
   saveSettings() {
     console.log('Saving settings:', this.profile);
