@@ -44,6 +44,57 @@ def generate_schedule():
 schedule = generate_schedule()
 total_cost, total_waiting_time = calculate_metrics(schedule, given_prices)
 
+def get_total_cost_by_price(schedule, price):
+    total_cost_per_hour =0
+    for device, start_minute in schedule.items():
+        duration = devices[device]["duration"]
+        consumption = devices[device]["consumption"]
+        earliest_start = devices[device]["start_range"][0]
+
+        # Calculate the cost for the device's operation
+        device_cost = 0
+        remaining_duration = duration
+        current_minute = start_minute
+
+        while remaining_duration > 0:
+            # Wrap around if current_minute exceeds 1440 minutes
+            current_minute = current_minute % num_minutes
+
+            # Determine the end of the current hour
+            current_hour = current_minute // 60
+            next_hour_start = (current_hour + 1) * 60
+            minutes_in_current_hour = min(next_hour_start - current_minute, remaining_duration)
+
+            # Calculate the cost for the current segment
+            segment_cost = consumption * price * (minutes_in_current_hour / 60)
+            device_cost += segment_cost
+
+            # Update the current minute and remaining duration
+            current_minute += minutes_in_current_hour
+            remaining_duration -= minutes_in_current_hour
+
+            # Add the cost to the corresponding hour
+            total_cost_per_hour += segment_cost
+
+    return total_cost_per_hour
+
+def get_comparison_plans():
+    current_percent = total_cost
+
+    blue_percent = get_total_cost_by_price(schedule, 0.145)
+    green_percent = get_total_cost_by_price(schedule, 0.13089)
+    yellow_percent = get_total_cost_by_price(schedule, 0.12882)
+
+    blue_diff = ((current_percent  - blue_percent) / current_percent) * 100
+    green_diff = ((current_percent - green_percent) / current_percent) * 100
+    yellow_diff = ((current_percent - yellow_percent) / current_percent) * 100
+
+    return [blue_diff, green_diff, yellow_diff]
+
+@app.get("/getComparisonPlans")
+def get_comparison():
+    return get_comparison_plans()
+
 # Endpoint to get a new schedule
 @app.get("/getSchedule")
 def get_schedule():

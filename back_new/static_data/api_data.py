@@ -25,3 +25,7 @@ given_prices = [
 ]
 
 num_minutes = 24 * 60  # 1440 minutes in a day
+
+# blue price = 0.145 #blue
+# green price 0.13089
+# yellow price = 0.0.12882
