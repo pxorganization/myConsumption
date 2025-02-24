@@ -3,25 +3,20 @@ import matplotlib.pyplot as plt
 import matplotlib.dates as mdates
 import datetime
 
-solution = {
-    "Dish Washer": (857,977),
-    "Washing Machine": (611, 701),
-    "Cloth Dryer": (1084, 1174),
-    "Oven 1": (1114, 1204),
-    "Oven 2": (722, 812),
-    "Cook Top": (1140, 1170),
-    "Microwave": (516, 528),
-    "Electric Vehicle": (1390, 190), # 1390 + 240 = 1630 and to start from 0 i do 1630 - 1440 = 190
-    "Laptop": (1028, 1148),
-    "Vacuum Cleaner": (641, 701),
-    "Air Condition 1": (480, 570),
-    "Air Condition 2": (1156, 1246),
-    "Water Heater": (1023, 1143),
-    "Refrigerator": (0, 1440),
-    "Lighting 1": (420, 600),
-    "Lighting 2": (1080, 60)
-}
-
+def create_solution(schedule, devices):
+    solution = {}
+    for device, start_minute in schedule.items():
+        duration = devices[device]["duration"]
+        end_minute = start_minute + duration
+        
+        # Handle wrap-around cases (e.g., end_minute >= 1440)
+        if end_minute > 1440:
+            end_minute -= 1440
+        
+        # Add the device and its start/end times to the solution dictionary
+        solution[device] = (start_minute, end_minute)
+    
+    return solution
 
 def convert_minutes_to_time(minutes):
     """Convert minutes since midnight to HH:MM format."""
@@ -42,28 +37,6 @@ def transform_solution(solution):
     
     return period
 
-period = transform_solution(solution)
-
-# Updated data with "HH:MM" format
-allocationplot = {
-    "Dish Washer": {"schedule": ("14:00", "22:00"), "period": period['Dish Washer']},
-    "Washing Machine": {"schedule": ("10:00", "18:00"), "period": period['Washing Machine']},
-    "Cloth Dryer": {"schedule": ("18:00", "22:00"), "period":period['Cloth Dryer']},
-    "Oven 1": {"schedule": ("18:30", "22:00"), "period": period['Oven 1']},
-    "Oven 2": {"schedule": ("12:00", "14:30"), "period": period['Oven 2']},
-    "Cook Top": {"schedule": ("18:30", "22:00"), "period": period['Cook Top']},
-    "Microwave": {"schedule": ("08:00", "14:00"), "period": period['Microwave']},
-    "Electric Vehicle": {"schedule": ("23:00", "06:00"), "period": period['Electric Vehicle']},
-    "Laptop": {"schedule": ("17:00", "23:00"), "period": period['Laptop']},
-    "Vacuum Cleaner": {"schedule": ("10:00", "14:00"), "period": period['Vacuum Cleaner']},
-    "Air Condition 1": {"schedule": ("08:00", "11:00"), "period": period['Air Condition 1']},
-    "Air Condition 2": {"schedule": ("19:00", "22:00"), "period": period['Air Condition 2']},
-    "Water Heater": {"schedule": ("17:00", "22:00"), "period": period['Water Heater']},
-    "Refrigerator": {"schedule": ("00:00", "24:00"), "period": period['Refrigerator']},
-    "Lighting 1": {"schedule": ("07:00", "10:00"), "period": period['Lighting 1']},
-    "Lighting 2": {"schedule": ("18:00", "01:00"), "period": period['Lighting 2']},
-}
-
 def convert_to_time(time_str):
     """Convert 'HH:MM' string to a datetime object."""
     hours, minutes = map(int, time_str.split(":"))
@@ -79,7 +52,28 @@ def split_time_range(time_range):
         return [(start, "24:00"), ("00:00", end)]
     return [time_range]
 
-def main():
+# Function to create the allocationplot dictionary
+def create_allocationplot(devices, period):
+    allocationplot = {}
+    for device, details in devices.items():
+        start_range = details["start_range"]
+        
+        # Convert start_range to "HH:MM" format
+        schedule_start = convert_minutes_to_time(start_range[0])
+        schedule_end = convert_minutes_to_time(start_range[1])
+        
+        # Get the period from the period dictionary
+        device_period = period[device]
+        
+        # Add the device and its details to the allocationplot dictionary
+        allocationplot[device] = {
+            "schedule": (schedule_start, schedule_end),
+            "period": device_period
+        }
+    
+    return allocationplot
+
+def main(allocationplot):
     device_positions = list(range(len(allocationplot), 0, -1))
 
     fig, ax = plt.subplots(figsize=(16, 8))
@@ -133,8 +127,7 @@ def main():
         bbox_to_anchor=(0.5, 1.15),
         ncol=2
     )
-
     return plt, fig
 
-plt, fig = main()
-plt.show()
+#plt, fig = main(allocationplot)
+#plt.show()

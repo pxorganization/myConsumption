@@ -1,5 +1,11 @@
 from static_data.api_data import devices, given_prices, num_minutes
 from calculators.calculator import calculate_metrics, calculate_total_cost_per_hour, calculate_total_consumption_per_hour
+from diagramMat import create_allocationplot, transform_solution, create_solution, main
+
+from matplotlib.lines import Line2D
+import matplotlib.pyplot as plt
+import matplotlib.dates as mdates
+import datetime
 
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
@@ -15,10 +21,6 @@ app.add_middleware(
     allow_methods=["*"],  # Allow all HTTP methods (GET, POST, etc.)
     allow_headers=["*"],  # Allow all headers
 )
-
-# Load the Q-table from a file
-Q = np.load("ai_models/43_100_lightwave.npy")
-print("Q-table loaded from 43_100_lightwave.npy")
 
 # Function to generate a new schedule
 def generate_schedule():
@@ -40,9 +42,6 @@ def generate_schedule():
         # Convert numpy.int64 to native Python int
         schedule[device] = int(best_start_minute)
     return schedule
-
-schedule = generate_schedule()
-total_cost, total_waiting_time = calculate_metrics(schedule, given_prices)
 
 def get_total_cost_by_price(schedule, price):
     total_cost_per_hour =0
@@ -91,14 +90,25 @@ def get_comparison_plans():
 
     return [blue_diff, green_diff, yellow_diff]
 
+# Load the Q-table from a file
+Q = np.load("ai_models/43_100_lightwave.npy")
+print("Q-table loaded from 43_100_lightwave.npy")
+
+schedule = generate_schedule()
+total_cost, total_waiting_time = calculate_metrics(schedule, given_prices)
+
+@app.get("/getImage")
+def get_schedule():
+    solution = create_solution(schedule, devices)
+    period = transform_solution(solution)
+    allocationplot = create_allocationplot(devices, period)
+
+    main(allocationplot)
+    return "Image created"
+    
 @app.get("/getComparisonPlans")
 def get_comparison():
     return get_comparison_plans()
-
-# Endpoint to get a new schedule
-@app.get("/getSchedule")
-def get_schedule():
-    return schedule
 
 # Endpoint to calculate total cost
 @app.get("/getTotalCost")
